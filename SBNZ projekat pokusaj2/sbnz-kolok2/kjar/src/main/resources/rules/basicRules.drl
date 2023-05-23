@@ -5,12 +5,40 @@ import com.ftn.sbnz.model.*;
 
 rule "odredi prvu kaznu"
     when
-        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne)
+        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne, tipZahtevaZaKaznu == "NEDODELJEN")
         Number(intValue==1) from accumulate(
             $z2: ZahtevZaKaznu(registarskiBrojVozila==$regBr)
             over window:time(15m), count($z2)
         )
-        not(Kazna(id == $sifraKaz))
     then
         System.out.println("----------Moram da kreiram novu kaznu po nekom sablonu------------");
+        modify ($z1) { setTipZahtevaZaKaznu("DODELI_KAZNU") };
+end
+
+
+
+rule "preskoci drugu kaznu"
+    when
+        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne, tipZahtevaZaKaznu == "NEDODELJEN")
+        Number(intValue==2) from accumulate(
+            $z2: ZahtevZaKaznu(registarskiBrojVozila==$regBr)
+            over window:time(15m), count($z2)
+        )
+    then
+        System.out.println("----------Ne treba da kreiram novu kaznu------------");
+        modify ($z1) { setTipZahtevaZaKaznu("NE_DODELJUJ_KAZNU") };
+end
+
+
+
+rule "posalji patrolu"
+    when
+        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne, tipZahtevaZaKaznu == "NEDODELJEN")
+        Number(intValue>2) from accumulate(
+            $z2: ZahtevZaKaznu(registarskiBrojVozila==$regBr)
+            over window:time(60m), count($z2)
+        )
+    then
+        System.out.println("----------Moram da posaljem patrolu------------");
+        modify ($z1) { setTipZahtevaZaKaznu("POSALJI_PATROLU") };
 end

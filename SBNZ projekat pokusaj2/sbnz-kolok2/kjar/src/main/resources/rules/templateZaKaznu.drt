@@ -1,0 +1,22 @@
+template header
+    vrstaLokacije
+    donjaGranicaPrekoracenja
+    gornjaGranicaPrekoracenja
+    donjaGranicaNovcaneKazne
+    gornjaGranicaNovcaneKazne
+    brojKaznenihPoena
+    duzinaZatvorskeKazne
+    
+package rules;
+
+import com.ftn.sbnz.model.*;
+
+
+template "Odredi_kaznu"
+    rule "Vrsta_kazne_@{row.rowNumber}"
+        when
+            $z1: ZahtevZaKaznu(prekoracenje >= @{donjaGranicaPrekoracenja}, prekoracenje <= @{gornjaGranicaPrekoracenja}, tipLokacije=="@{vrstaLokacije}", tipZahtevaZaKaznu=="DODELI_KAZNU")        
+        then
+            System.out.println("usla sam u pravljneje kazne");
+    end
+end template

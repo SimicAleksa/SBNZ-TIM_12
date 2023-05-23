@@ -24,6 +24,7 @@ public class ZahtevZaKaznu implements Serializable {
     private String registarskiBrojVozila;
     private double prekoracenje;
     private String tipLokacije;
+    private String tipZahtevaZaKaznu;
 
 
 }
