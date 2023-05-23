@@ -1,0 +1,24 @@
+package rules;
+
+import com.ftn.sbnz.model.Boat;
+import com.ftn.sbnz.model.Wave;
+
+declare AlarmEvent
+    @role(event)
+    boat: Boat
+end
+
+rule "prvo pravilo"
+    when
+        $b: Boat()
+        Number(intValue>=3) from accumulate(
+            $w: Wave(waveH>$b.getBoatH())
+            over window:time(10m), count($w)
+        )
+        not(AlarmEvent(boat == $b))
+    then
+        insert(new AlarmEvent($b));
+        System.out.println("------potopljen je----------");
+        System.out.println($b.getBoatId());
+        System.out.println("----------------------------");
+end

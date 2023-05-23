@@ -1,0 +1,30 @@
+package rules;
+
+import com.ftn.sbnz.model.Brod;
+
+
+query isPartOf(String deo,String celina)
+    Brod(deo,celina;)
+    or
+    Brod(deo,x;) and isPartOf(x,celina;)
+end
+
+rule "brodovi" 
+    when
+        $b1: Brod($d1: nazivBroda,$c1: tipBroda)
+        $b2: Brod(nazivBroda != $d1,$c2: tipBroda)
+        isPartOf($d1,$c2;)
+    then
+        System.out.println($d1+" jeste deo "+ $c2);
+end
+
+rule "kaga ratni??" 
+    when
+        $b1: Brod($d1: nazivBroda == "Kaga")
+        $b2: Brod($c1: tipBroda =="Ratni brod")
+        isPartOf($d1,$c1;)
+    then
+        System.out.println("---------------------------------------");
+        System.out.println($d1+" jeste deo "+ $c1);
+        System.out.println("---------------------------------------");
+end

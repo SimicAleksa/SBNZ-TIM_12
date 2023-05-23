@@ -1,0 +1,16 @@
+package rules;
+
+import com.ftn.sbnz.model.*;
+
+
+rule "odredi prvu kaznu"
+    when
+        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne)
+        Number(intValue==1) from accumulate(
+            $z2: ZahtevZaKaznu(registarskiBrojVozila==$regBr)
+            over window:time(15m), count($z2)
+        )
+        not(Kazna(id == $sifraKaz))
+    then
+        System.out.println("----------Moram da kreiram novu kaznu po nekom sablonu------------");
+end

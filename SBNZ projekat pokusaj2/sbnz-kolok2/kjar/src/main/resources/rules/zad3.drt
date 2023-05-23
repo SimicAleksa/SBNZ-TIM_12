@@ -1,0 +1,18 @@
+template header
+    length
+    draft
+    TEU
+    type
+
+package rules;
+
+import com.ftn.sbnz.model.BoatTemp;
+
+template "moj"
+    rule "pravilo 1_@{row.rowNumber}"
+        when
+            $b: BoatTemp(@{length} == length,@{draft} == draft,@{TEU} == TEU)
+        then
+            System.out.println("------------------------"+"@{type}"+"--------------------------");
+    end
+end template

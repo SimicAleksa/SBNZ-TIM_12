@@ -1,0 +1,49 @@
+template header
+    vrstaLokacije
+    visinaOgranicenja
+    vrstaVremena
+    procenatUmanjenjaBrzine
+
+package rules;
+
+import com.ftn.sbnz.model.ZahtevZaKaznu;
+import com.ftn.sbnz.model.Kazna;
+import com.ftn.sbnz.model.PodaciSaRadaraDTO;
+
+template "Odredi_tip_lokacije"
+    rule "Tip_lokacije_@{row.rowNumber}"
+        when
+            $r: PodaciSaRadaraDTO(tipLokacije=="@{vrstaLokacije}", ogranicenje==0)
+        then
+            System.out.println("tip je sadaaa " + "@{vrstaLokacije}" + @{visinaOgranicenja});
+            modify ($r) { setOgranicenje(@{visinaOgranicenja}) };
+    end
+end template
+
+
+template "Smanji_gornju_granicu_zbog_vremena"
+    rule "Tip_vremena_@{row.rowNumber}"
+        no-loop
+        when
+            $r: PodaciSaRadaraDTO(vremenskoStanje == "@{vrstaVremena}", ogranicenje!=0, izracunataBrzina==false, $prvobitnoOgranicenje:ogranicenje )
+        then
+            System.out.println("usla sam i u drugo pravilo");
+            modify ($r) { setOgranicenje($prvobitnoOgranicenje * (1 - @{procenatUmanjenjaBrzine} / 100)) };
+            modify ($r) { setIzracunataBrzina(true) }; 
+    end
+end template
+
+
+rule "kreiraj zahtev za kaznu"
+    when
+        $r: PodaciSaRadaraDTO(izracunataBrzina==true, zabelezenaBrzina > ogranicenje, $idPodatka:id, $regBr: registarskiBrojVozila, $o:ogranicenje, $z:zabelezenaBrzina, $tipLok: tipLokacije)
+        not (ZahtevZaKaznu(sifraKazne==$idPodatka))
+    then
+        insert(new ZahtevZaKaznu($idPodatka, $regBr, $z - $o, $tipLok));
+        System.out.println($idPodatka + " " + $regBr + " " + ($z - $o) + " SU NOVI PARAMETRI");
+        System.out.println("ogranicenje je bilo " + $o );
+        System.out.println($tipLok + " je tip lokacije");
+end
+
+
+
