@@ -13,10 +13,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OduzimanjeVozacke {
-    @Id
-    private String id;
-    private LocalDateTime date;
+//    @Id
+//    private String id;
+    private String brojVozackeDozvole;
+    private LocalDateTime datum;
     private int brojMeseci;
+
+    public OduzimanjeVozacke(String brojVozacke, int brojMeseci)
+    {
+        this.brojVozackeDozvole = brojVozacke;
+        this.brojMeseci = brojMeseci;
+        this.datum = LocalDateTime.now();
+    }
 
 
 }

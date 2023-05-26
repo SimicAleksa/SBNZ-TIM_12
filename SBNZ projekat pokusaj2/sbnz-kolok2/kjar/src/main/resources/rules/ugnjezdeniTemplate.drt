@@ -40,9 +40,7 @@ rule "kreiraj zahtev za kaznu"
         not (ZahtevZaKaznu(sifraKazne==$idPodatka))
     then
         insert(new ZahtevZaKaznu($idPodatka, $regBr, $z - $o, $tipLok, "NEDODELJEN"));
-        System.out.println($idPodatka + " " + $regBr + " " + ($z - $o) + " SU NOVI PARAMETRI");
-        System.out.println("ogranicenje je bilo " + $o );
-        System.out.println($tipLok + " je tip lokacije");
+        System.out.println($idPodatka + " " + $regBr + " " + ($z - $o) + " su novi parametri");
 end
 
 

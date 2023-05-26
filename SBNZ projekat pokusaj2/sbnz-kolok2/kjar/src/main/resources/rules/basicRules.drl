@@ -1,9 +1,10 @@
 package rules;
 
 import com.ftn.sbnz.model.*;
+import java.time.LocalDateTime;
 
 
-rule "odredi prvu kaznu"
+rule "zatrazi kreiranje prve kaznu"
     when
         $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne, tipZahtevaZaKaznu == "NEDODELJEN")
         Number(intValue==1) from accumulate(
@@ -41,4 +42,87 @@ rule "posalji patrolu"
     then
         System.out.println("----------Moram da posaljem patrolu------------");
         modify ($z1) { setTipZahtevaZaKaznu("POSALJI_PATROLU") };
+end
+
+
+rule "opasan vozac"
+    when
+        $v: Vozac($brojVozackeDozvole: brojVozackeDozvole)
+        $total: Number() from accumulate(
+        $k1: Kazna($regBr: registarskiBrojVozila, istekla == false, $brojVozackeDozvole == brojVozackeDozvole, $brKaznenihBodova: brojKaznenihBodova),
+        sum($brKaznenihBodova))
+        eval($total.intValue() >= 14 && $total.intValue() <= 17)
+    then
+        System.out.println("-----------ODUZMI na 12-----------");
+        insert(new OduzimanjeVozacke($brojVozackeDozvole, 12));
+end
+
+
+rule "trajno oduzimanje vozacke"
+    when
+        $v: Vozac($brojVozackeDozvole: brojVozackeDozvole, $brOduzimanja: brojOduzimanjeVozacke)
+        $total: Number() from accumulate(
+        $k1: Kazna($regBr: registarskiBrojVozila, istekla == false, $brojVozackeDozvole == brojVozackeDozvole, $brKaznenihBodova: brojKaznenihBodova),
+        sum($brKaznenihBodova))
+        eval($total.intValue() >= 18 - 3 * $brOduzimanja)
+    then
+        System.out.println("-----------trajno oduzimanje-----------");
+        modify ($v) { setBrojVozackeDozvole("") };
+        modify ($v) { povecajBrojOduzimanjaVozacke() };   
+end
+
+
+rule "vjecno oduzimanje vozacke dozvole"
+    when
+        $v: Vozac(brojOduzimanjeVozacke==3)
+    then
+        modify ($v) { setBrojVozackeDozvole("") };
+        modify ($v) { setVjecnoBlokiran(true) };
+end
+
+
+rule "brisanje kaznenih bodova nakon 2 godine"
+    when
+        $k: Kazna(datum.isBefore(LocalDateTime.now().minusYears(2)))
+    then
+        modify ($k) { setIstekla(true) };
+end
+
+
+rule "vozac nije platio kaznu i ne moze da se pretvori u kaznu zatvora"
+    when
+        // ako je kazna imala novcanu vrijednost> 60 000, proslo je pola godine od izricanja, a polje za datum placanja je idalje nepopunjeno 
+        $k: Kazna(novcanaKazna > 60000, datum.isBefore(LocalDateTime.now().minusMonths(6)), vremePlacanja==null,
+        $id: id, $regBr: registarskiBrojVozila, $brVoz: brojVozackeDozvole, $iznos: novcanaKazna
+        )
+        not IzvrsiteljskiPostupak(idKazne==$id);
+    then
+        insert(new IzvrsiteljskiPostupak($id, $brVoz, $iznos));
+        modify ($k) { setIstekla(true) };
+end
+
+
+
+rule "vozac nije platio kaznu, ali moze da se pretvori u kaznu zatvora"
+    when
+        // ako je kazna imala novcanu vrijednost, proslo je pola godine od izricanja, a polje za datum placanja je idalje nepopunjeno 
+        $k: Kazna(novcanaKazna > 0, novcanaKazna <= 60000, datum.isBefore(LocalDateTime.now().minusMonths(6)), vremePlacanja==null,
+        $id: id, $regBr: registarskiBrojVozila, $brVoz: brojVozackeDozvole, $iznos: novcanaKazna
+        )
+        not Kazna(id=="neplaceno" + $id);
+    then
+        insert(new Kazna("neplaceno" + $id, $regBr, $brVoz, 0, 0, Math.ceil((double) $iznos / 1000)));
+        modify ($k) { setIstekla(true) };
+end
+
+
+rule "vozac je vozio sa nevazecom vozackom dozvolom"
+    when
+    // ako je vozacka oduzeta prije manje od sada - broj mjeseci koliko vazi oduzimanje 
+        $o: OduzimanjeVozacke(datum.isAfter(LocalDateTime.now().minusMonths(brojMeseci)), $brVoz: brojVozackeDozvole)
+        $p: PodaciSaRadaraDTO($regBrRadar: registarskiBrojVozila)
+        // ako postoji vozac ciji je auto uhvacen na radaru, a on ima oduzetu vozacku
+        $v: Vozilo(brojVozackeDozvoleVozaca==$brVoz, registarskiBrojVozila==$regBrRadar)
+    then
+        insert(new Kazna("vidjecu jos za id", $regBrRadar, $brVoz, 100000, 14, 15));
 end
