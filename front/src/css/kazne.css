@@ -1,0 +1,64 @@
+.fine-item {
+    border: 3px solid #ccc;
+    padding: 10px;
+    margin-bottom: 100px;
+    font-size: large;
+  }
+
+
+  .fine-row {
+    display: flex;
+    margin-bottom: 10px;
+  }
+  
+  /* Styling for attribute */
+  .attribute {
+    display: flex;
+    align-items: left ;
+    margin-left: 20px;
+  }
+  
+  .attribute label {
+    margin-right: 5px;
+  }
+  
+  .attribute p {
+    margin: 0;
+    font-weight: bold;
+
+  }
+
+  #outerDiv
+  {
+    background-color: white;
+    padding: 50px;
+    margin-top: 40px;
+    border-radius: 15px;   
+     
+  }
+
+  #backgroundDiv
+  {
+    background-color: #FFF9E3;
+    height: 100%;
+    padding-top: 50px;
+  }
+
+  .icon-positive
+  {
+    color: green;
+    stroke-width: 1px;
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+
+  }
+
+  .icon-negative
+  {
+    color: red;
+    stroke-width: 1px;
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+  }

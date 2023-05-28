@@ -1,0 +1,62 @@
+.fine-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  /* Fine item */
+  .fine-item {
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  /* Account info */
+  .account-info {
+    text-align: right;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: large;
+    font-weight: bold;
+  }
+  
+  /* Fine item rows */
+  .row {
+    margin-bottom: 10px;
+    
+  }
+  
+  /* Fine item button */
+  .text-right {
+    text-align: right;
+  }
+  
+
+  #outerDiv
+  {
+    background-color: white;
+    padding: 50px;
+    margin-top: 40px;
+    border-radius: 15px;   
+     
+  }
+
+  #backgroundDiv
+  {
+    background-color: #FFF9E3;
+    height: 100%;
+    padding-top: 50px;
+  }
+
+  .fine-item-vozac
+  {
+    padding: 10px;
+    margin-top: 20px;
+    width: 80%;
+    background-color:   #ffe0cc;
+    border-radius: 10px;
+    font-size: large;
+    
+
+  }

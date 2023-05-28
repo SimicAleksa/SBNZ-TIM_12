@@ -1,0 +1,79 @@
+.registration-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #FFF9E3;
+    border-radius: 25px;
+  }
+  
+  .card {
+    width: 700px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f7f7f7;
+  }
+  
+  .card-title {
+    margin-top: 0;
+    text-align: center;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .add-car-container {
+    margin-top: 20px;
+  }
+  
+  .added-cars-container {
+    margin-top: 20px;
+  }
+  
+  .car-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .added-cars-container .car-info span {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  
+  .added-cars-container .car-info .car-attribute {
+    font-weight: normal;
+  }
+  
+  .row {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .col-md-6 {
+    width: 50%;
+  }
+  
+  @media (max-width: 576px) {
+    .card {
+      width: 90%;
+    }
+  
+    .row {
+      flex-wrap: wrap;
+    }
+  
+    .col-md-6 {
+      width: 100%;
+    }
+  }
+  
