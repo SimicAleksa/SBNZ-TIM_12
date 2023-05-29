@@ -56,7 +56,7 @@ public class ugnjezdeniTemplateTest {
     private void insertObjects(KieSession kSession) {
         PodaciSaRadaraDTO p1 = new PodaciSaRadaraDTO("1", "3905732507920", "Veternik",
                 54.2, "kisa", "naseljeno mesto");
-        Vozac vozac1 = new Vozac("brojVozacke123", "Marko", "Markovic", 2);
+        Vozac vozac1 = new Vozac("brojVozacke123", "Marko", "Markovic", "g@fks", "lp", 2);
         Vozilo vozilo1 = new Vozilo("vozilo1id", "brojVozacke123", 
         "crvena", "Mercedes", "B180", "3905732507920");
 

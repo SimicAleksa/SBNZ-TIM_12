@@ -2,9 +2,11 @@ import React, {useState} from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import "../css/login.css";
+import { login } from '../services/UserService';
 
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -18,14 +20,12 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Perform login logic here
-    // You can use the email and password values for authentication
-    // For simplicity, let's just display the values in the console
+
     console.log('Email:', email);
     console.log('Password:', password);
-    // Reset the form fields
-    setEmail('');
-    setPassword('');
+    login(email, password, navigate);
+    //setEmail('');
+    //setPassword('');
   };
 
   
@@ -33,13 +33,17 @@ const Login = () => {
     <div className="login-page">
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-md-5">
+          <div className="col-md-7">
             <div className="card">
               <div className="card-body">
                 <h1 className="card-title text-center">Login</h1>
                 <form onSubmit={handleSubmit}>
-                  <div className="form-group">
+
+                  <div className="form-group row">
+                    <div className='col-md-4'>
                     <label>Email:</label>
+                    </div>
+                    <div className='col-md-8'>
                     <input
                       type="email"
                       className="form-control"
@@ -47,9 +51,14 @@ const Login = () => {
                       onChange={handleEmailChange}
                       required
                     />
+                    </div>
                   </div>
-                  <div className="form-group">
+
+                  <div className="form-group row">
+                  <div className='col-md-4'>
                     <label>Password:</label>
+                    </div>
+                    <div className='col-md-8'>
                     <input
                       type="password"
                       className="form-control"
@@ -57,6 +66,7 @@ const Login = () => {
                       onChange={handlePasswordChange}
                       required
                     />
+                    </div>
                   </div>
                   <button type="submit" className="btn btn-primary btn-block">Login</button>
                 </form>

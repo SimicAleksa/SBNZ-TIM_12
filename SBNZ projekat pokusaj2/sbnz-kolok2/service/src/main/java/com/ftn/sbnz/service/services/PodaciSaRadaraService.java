@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PodaciSaRadaraService {
-    @Autowired
-    private PodaciSaRadaraRepository podaciSaRadaraRepository;
+//    @Autowired
+//    private PodaciSaRadaraRepository podaciSaRadaraRepository;
 }

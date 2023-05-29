@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { BsCheckCircle, BsXCircle } from 'react-icons/bs';
 import "../css/vozaceveKazne.css";
+import DriverNavbar from '../other/DriverNavbar';
 
 
 
@@ -52,8 +53,12 @@ const UserFinesPage = () => {
     };
   
     return (
-      <div id="backgroundDiv">
-        <div style={{ width: '65%', margin: '0 auto'}} id='outerDiv' class='shadow'>
+      <div>
+        <div style={{position: 'fixed', width: '100%', top: '0px'}}>
+      <DriverNavbar/>
+      </div>
+      <div id="backgroundDiv-vozac">
+        <div style={{ width: '65%', margin: '0 auto', marginTop: '60px'}} id='outerDiv' class='shadow'>
         <h1>{user.name}</h1>
         <div className="account-info">My account: {user.accountBalance}$</div>
   
@@ -93,6 +98,7 @@ const UserFinesPage = () => {
           ))}
         </div>
       </div>
+    </div>
     </div>
     );
   };

@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-
+import AdminNavbar from '../other/AdminNavbar';
 
 //export default function PodaciSaRadara() {
 const TrafficDataPage = () => {
@@ -60,65 +60,66 @@ const TrafficDataPage = () => {
 
    return (
     <div>
-  <h1>Traffic Data</h1>
-  <form className="mb-3" style={{ width: '66%', margin: '0 auto' }} onSubmit={handleFilterSubmit}>
+      <AdminNavbar/>
+  <h1 style={{  marginTop:'30px'}}>Podaci sa radara </h1>
+  <form className="mb-3" style={{ width: '66%', margin: '0 auto', marginTop:  '0px'}} onSubmit={handleFilterSubmit}>
     <div className="row">
       <div className="col-md-4">
-        <label htmlFor="carRegistrationNumber" className="form-label">Car Registration Number:</label>
+        <label htmlFor="carRegistrationNumber" className="form-label">Registarski broj vozila:</label>
         <input type="text" id="carRegistrationNumber" className="form-control" name="carRegistrationNumber" value={filters.carRegistrationNumber} onChange={handleFilterChange} />
       </div>
       <div className="col-md-4">
-        <label htmlFor="location" className="form-label">Location:</label>
+        <label htmlFor="location" className="form-label">Lokacija:</label>
         <input type="text" id="location" className="form-control" name="location" value={filters.location} onChange={handleFilterChange} />
       </div>
       <div className="col-md-2">
-        <label htmlFor="weatherCondition" className="form-label">Weather Condition:</label>
+        <label htmlFor="weatherCondition" className="form-label">Vremensko stanje:</label>
         <select id="weatherCondition" className="form-control" name="weatherCondition" value={filters.weatherCondition} onChange={handleFilterChange}>
-          <option value="">All</option>
-          <option value="snow">Snow</option>
-          <option value="rain">Rain</option>
-          <option value="regular">Regular</option>
+          <option value="">Sve</option>
+          <option value="snow">Sneg</option>
+          <option value="rain">Kisa</option>
+          <option value="regular">Regularno</option>
         </select>
       </div>
       <div className="col-md-2">
-        <label htmlFor="locationType" className="form-label">Location Type:</label>
+        <label htmlFor="locationType" className="form-label">Tip lokacije:</label>
         <select id="locationType" className="form-control" name="locationType" value={filters.locationType} onChange={handleFilterChange}>
-          <option value="">All</option>
-          <option value="Inhabited">Inhabited</option>
-          <option value="Uninhabited">Uninhabited</option>
+          <option value="">Sve</option>
+          <option value="Inhabited">Naseljeno mesto</option>
+          <option value="Uninhabited">Nenaseljeno mesto</option>
         </select>
       </div>
     </div>
     <div className="row mt-4">
       <div className="col-md-5">
-        <label className="form-label">Speed Limit:</label>
+        <label className="form-label">Ogranicenje:</label>
         <div className="row">
           <div className="col-md-6">
-            <label htmlFor="speedLimitFrom" className="form-label">From:</label>
+            <label htmlFor="speedLimitFrom" className="form-label">Od:</label>
             <input type="number" id="speedLimitFrom" className="form-control" name="speedLimitFrom" value={filters.speedLimitFrom} onChange={handleFilterChange} />
           </div>
           <div className="col-md-6">
-            <label htmlFor="speedLimitTo" className="form-label">To:</label>
+            <label htmlFor="speedLimitTo" className="form-label">Do:</label>
             <input type="number" id="speedLimitTo" className="form-control" name="speedLimitTo" value={filters.speedLimitTo} onChange={handleFilterChange} />
           </div>
         </div>
       </div>
       <div className="col-md-5">
-        <label className="form-label">Detected Speed:</label>
+        <label className="form-label">Detektovana brzina:</label>
         <div className="row">
           <div className="col-md-6">
-            <label htmlFor="detectedSpeedFrom" className="form-label">From:</label>
+            <label htmlFor="detectedSpeedFrom" className="form-label">Od:</label>
             <input type="number" id="detectedSpeedFrom" className="form-control" name="detectedSpeedFrom" value={filters.detectedSpeedFrom} onChange={handleFilterChange} />
           </div>
           <div className="col-md-6">
-            <label htmlFor="detectedSpeedTo" className="form-label">To:</label>
+            <label htmlFor="detectedSpeedTo" className="form-label">Do:</label>
             <input type="number" id="detectedSpeedTo" className="form-control" name="detectedSpeedTo" value={filters.detectedSpeedTo} onChange={handleFilterChange} />
           </div>
         </div>
       </div>
       <div className="col-md-1 mt-3" style={{position: 'relative', }}>
-  <button type="submit" className="btn btn-primary btn-lg" style={{position: 'absolute', bottom: 0, right: 0,}}>Filter</button>
-</div>
+        <button type="submit" className="btn btn-primary btn-lg" style={{position: 'absolute', top: 0, right: 0,}}>Trazi</button>
+      </div>
     </div>
   </form>
   <table className="table">

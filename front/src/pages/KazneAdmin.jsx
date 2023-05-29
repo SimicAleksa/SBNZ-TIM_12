@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import "../css/kazne.css";
 import { BsCheckCircle, BsXCircle } from 'react-icons/bs';
+import AdminNavbar from '../other/AdminNavbar';
+
 
 
 
@@ -98,12 +100,17 @@ import { BsCheckCircle, BsXCircle } from 'react-icons/bs';
 
 
     return (
+      <div>
+      <div style={{position: 'fixed', width: '100%', top: '0px'}}>
+      <AdminNavbar/>
+      </div>
+
       <div id="backgroundDiv">
       <div style={{ width: '50%', margin: '0 auto'}} id='outerDiv' class='shadow'>
       <form class="mb-3">
         <div class="row">
           <div class="col-md-6">
-            <label>Registracioni broj vozila:</label>
+            <label>Registarski broj vozila:</label>
             <input class="form-control" type="text" name="carRegistrationNumber" />
           </div>
           <div class="col-md-6">
@@ -165,7 +172,7 @@ import { BsCheckCircle, BsXCircle } from 'react-icons/bs';
     <div className="fine-item rounded" key={index} class="shadow mb-3 mt-2 bg-light">
       <div className="fine-row" class='row'>
         <div className="attribute" class="col-md-6">
-          <label>Registracioni broj vozila: <b> {fine.carRegistrationNumber}</b></label>
+          <label>Registarski broj vozila: <b> {fine.carRegistrationNumber}</b></label>
         </div>
         <div className="attribute" class="col-md-6">
           <label>Broj vozacke dozvole:<b> {fine.driverLicenseNumber}</b></label>   
@@ -202,10 +209,9 @@ import { BsCheckCircle, BsXCircle } from 'react-icons/bs';
     
   ))}
 
-</div>
- 
     </div>
-
+    </div>
+    </div>
     </div>
     );
   };

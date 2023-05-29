@@ -2,6 +2,8 @@ import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import "../css/registracija.css";
+import AdminNavbar from '../other/AdminNavbar';
+
 
 const Registration = () => {
     const [firstName, setFirstName] = useState('');
@@ -71,9 +73,13 @@ const Registration = () => {
     };
 
     return (
+      <div>
+        <div style={{position: 'fixed', width: '100%', top: '0px'}}>
+        <AdminNavbar/>
+        </div>
         <div className="registration-page">
           <div className="card">
-            <h1 className="card-title">Registration</h1>
+            <h1 className="card-title">Dodavanje vozaca</h1>
             <form onSubmit={handleSubmit}>
             <div className='row'>
               <div className="form-group col-md-6">
@@ -175,6 +181,7 @@ const Registration = () => {
             </form>
           </div>
         </div>
+      </div>
       );
     };
 
