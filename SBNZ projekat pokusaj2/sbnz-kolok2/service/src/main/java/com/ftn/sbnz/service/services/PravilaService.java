@@ -1,33 +1,20 @@
-package com.ftn.sbnz.service.tests;
+package com.ftn.sbnz.service.services;
 
-import com.ftn.sbnz.model.Kazna;
-import com.ftn.sbnz.model.ParametriZaKaznu;
-import com.ftn.sbnz.model.ParametriZaNaseljeIVreme;
-import com.ftn.sbnz.model.PodaciSaRadaraDTO;
-import com.ftn.sbnz.model.Vozac;
-import com.ftn.sbnz.model.Vozilo;
-import com.ftn.sbnz.model.ZahtevZaKaznu;
-
-import org.apache.commons.codec.language.bm.Rule;
+import com.ftn.sbnz.model.*;
+import com.ftn.sbnz.service.repositories.*;
 import org.apache.commons.io.IOUtils;
-import org.drools.core.time.SessionPseudoClock;
-import org.drools.serialization.protobuf.ProtobufMessages.FactHandle;
 import org.drools.template.ObjectDataCompiler;
-import org.junit.jupiter.api.Test;
 import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
-import org.kie.api.builder.KieBuilder;
-import org.kie.api.builder.KieFileSystem;
-import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.definition.KiePackage;
+import org.kie.api.definition.rule.Rule;
 import org.kie.api.io.ResourceType;
-import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-import org.kie.api.runtime.KieSessionConfiguration;
-import org.kie.api.runtime.conf.ClockTypeOption;
 import org.kie.internal.utils.KieHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -35,45 +22,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Resource;
+@Service
+public class PravilaService {
+    @Autowired
+    PodaciSaRadaraRepository podaciSaRadaraRepository;
+    @Autowired
+    IzvrsiteljskiPostupakRepository izvrsiteljskiPostupakRepository;
+    @Autowired
+    KaznaRepository kaznaRepository;
+    @Autowired
+    KorisnikRepository korisnikRepository;
+    @Autowired
+    OduzimanjeVozackeRepository oduzimanjeVozackeRepository;
+    @Autowired
+    VoziloRepository voziloRepository;
+    @Autowired
+    ZahtevZaKaznuRepository zahtevZaKaznuRepository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class ugnjezdeniTemplateTest {
-
-
-    @Test
-    public void tests()
-    {
-        KieSession kSession = insertRules();
-        writeAllExistingRules(kSession);
-        insertObjects(kSession);
-        int n = kSession.fireAllRules();
-        assertEquals(5, n);
-        
-    }
-
-    private void insertObjects(KieSession kSession) {
-        PodaciSaRadaraDTO p1 = new PodaciSaRadaraDTO("1", "3905732507920", "Veternik",
-                54.2, "kisa", "naseljeno mesto");
-        Vozac vozac1 = new Vozac("brojVozacke123", "Marko", "Markovic", "g@fks", "lp", 2);
-        Vozilo vozilo1 = new Vozilo("brojVozacke123", 
-        "crvena", "Mercedes", "B180", "3905732507920");
-
-
-        kSession.insert(p1);
-        kSession.insert(vozac1);
-        kSession.insert(vozilo1);
-
-        
-        
-    }
-
-    private KieSession insertRules()
-    {
-        InputStream template12 = ugnjezdeniTemplateTest.class.getResourceAsStream("/rules/ugnjezdeniTemplate.drt");
-        InputStream basicRules = ugnjezdeniTemplateTest.class.getResourceAsStream("/rules/basicRules.drl");
-        InputStream template3 = ugnjezdeniTemplateTest.class.getResourceAsStream("/rules/templateZaKaznu.drt");
+    private KieSession insertRules() {
+        InputStream template12 = PodaciSaRadaraService.class.getResourceAsStream("/rules/ugnjezdeniTemplate.drt");
+        InputStream basicRules = PodaciSaRadaraService.class.getResourceAsStream("/rules/basicRules.drl");
+        InputStream template3 = PodaciSaRadaraService.class.getResourceAsStream("/rules/templateZaKaznu.drt");
 
 
         List<ParametriZaNaseljeIVreme> parametri1 = new ArrayList<>();
@@ -101,18 +70,6 @@ public class ugnjezdeniTemplateTest {
         parametri2.add(new ParametriZaKaznu("nenaseljeno mesto", 101.0, 1000, 0.00, 0.00, 0, 60));
 
 
-        /*ObjectDataCompiler converter = new ObjectDataCompiler();
-        KieHelper kieHelper = new KieHelper();
-
-        String drl1 = converter.compile(parametri1, template);
-        kieHelper.addContent(drl1, ResourceType.DRL);
-        KieSession kSession = kieHelper.build().newKieSession();
-
-        doFirstTemplateTest(kSession);
-        return kSession;*/
-
-        //////////////////////////////////////////////////
-
         ObjectDataCompiler converter = new ObjectDataCompiler();
         String drl1 = converter.compile(parametri1, template12);
         String drl2 = "";
@@ -134,21 +91,37 @@ public class ugnjezdeniTemplateTest {
 
         KieBase kieBase = kieHelper.build(config);
         KieSession kSession = kieBase.newKieSession();
-        return kSession; 
+        return kSession;
+
     }
-
-
-
-
 
     private void writeAllExistingRules(KieSession kSession) {
         KieBase kieBase = kSession.getKieBase();
         Collection<KiePackage> packages = kieBase.getKiePackages();
         for (KiePackage kiePackage : packages) {
-            Collection<org.kie.api.definition.rule.Rule> rules = kiePackage.getRules();
+            Collection<Rule> rules = kiePackage.getRules();
             for (org.kie.api.definition.rule.Rule rule : rules) {
                 System.out.println(rule.getName());
             }
         }
+    }
+
+    public void insertObjectsFromDatabase(KieSession kSession) {
+        for (Korisnik k: korisnikRepository.findAll()) kSession.insert(k);
+        for (IzvrsiteljskiPostupak i: izvrsiteljskiPostupakRepository.findAll()) kSession.insert(i);
+        for (Kazna k: kaznaRepository.findAll()) kSession.insert(k);
+        for (OduzimanjeVozacke k: oduzimanjeVozackeRepository.findAll()) kSession.insert(k);
+        for (PodaciSaRadaraDTO k: podaciSaRadaraRepository.findAll()) kSession.insert(k);
+        for (Vozilo k: voziloRepository.findAll()) kSession.insert(k);
+        for (ZahtevZaKaznu k: zahtevZaKaznuRepository.findAll()) kSession.insert(k);
+    }
+
+    public KieSession prepareSystem() {
+        KieSession kSession = insertRules();
+        writeAllExistingRules(kSession);
+        insertObjectsFromDatabase(kSession);
+        int n = kSession.fireAllRules();
+        System.out.println(n + "je broj odradjenih pravila");
+        return kSession;
     }
 }

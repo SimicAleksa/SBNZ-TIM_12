@@ -3,11 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import "../css/registracija.css";
 import AdminNavbar from '../other/AdminNavbar';
+import { addDriver } from '../services/UserService';
+
 
 
 const Registration = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [licenseNumber, setLicenseNumber] = useState('');
     const [registrationNumber, setRegistrationNumber] = useState('');
     const [carModel, setCarModel] = useState('');
@@ -21,6 +25,14 @@ const Registration = () => {
   
     const handleLastNameChange = (e) => {
       setLastName(e.target.value);
+    };
+
+    const handleEmailChange = (e) => {
+      setEmail(e.target.value);
+    };
+  
+    const handlePasswordChange = (e) => {
+      setPassword(e.target.value);
     };
   
     const handleLicenseNumberChange = (e) => {
@@ -63,9 +75,9 @@ const Registration = () => {
   
     const handleSubmit = (e) => {
       e.preventDefault();
-  
-      // Handle form submission logic here
-  
+      // ovdje treba da pisem vecinu koda
+      let driverObject = {"ime": firstName, "prezime": lastName, "email":email, "sifra": password, "brVozacke": licenseNumber, "cars": cars};
+      addDriver(driverObject);
       setFirstName('');
       setLastName('');
       setLicenseNumber('');
@@ -105,6 +117,33 @@ const Registration = () => {
                 />
               </div>
               </div>
+
+              <div className='row'>
+              <div className="form-group col-md-6">
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  className="form-control"
+                  value={email}
+                  onChange={handleEmailChange}
+                  required
+                />
+              </div>
+              <div className="form-group col-md-6">
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  className="form-control"
+                  value={password}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </div>
+              </div>
+
+
               <div className="form-group">
                 <label htmlFor="licenseNumber">Broj vozacke dozvole</label>
                 <input
@@ -168,10 +207,10 @@ const Registration = () => {
               <div className="added-cars-container">
                 {cars.map((car, index) => (
                   <div className="car-info" key={index}>
-                    <span className="car-attribute">Registarska oznaka: {car.registrationNumber}</span>
-                    <span className="car-attribute">Model: {car.carModel}</span>
-                    <span className="car-attribute">Marka: {car.carBrand}</span>
-                    <span className="car-attribute">Boja: {car.carColor}</span>
+                    <span className="car-attribute">Registarska oznaka: <b> {car.registrationNumber}</b></span>
+                    <span className="car-attribute">Model: <b>{car.carModel}</b></span>
+                    <span className="car-attribute">Marka: <b>{car.carBrand}</b></span>
+                    <span className="car-attribute">Boja: <b>{car.carColor}</b></span>
                   </div>
                 ))}
               </div>

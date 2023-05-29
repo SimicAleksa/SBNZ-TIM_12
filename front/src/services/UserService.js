@@ -15,11 +15,29 @@ export const login = async (username, password, navigate) => {
       if (korisnik.uloga === 'ADMIN') {
         navigate('/register');
       } else if (korisnik.uloga === 'VOZAC') {
-        navigate('/vozacevProfil'); // Replace '/driver' with the actual driver page URL
+        navigate('/vozacevProfil'); 
       }
     } else {
-      // Request failed
-      // Handle the login failure
+      // TODO ovdje uraditi nesto ako nije dobro
       alert('Nepostojeći korisnik');
     }
   }
+
+
+
+  export const addDriver = async (driverObject) => {
+    const response = await fetch('http://localhost:8080/addDriver', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(driverObject)
+    });
+
+    if (response.ok) {
+      alert("Uspjesno dodat vozac")
+    } else {
+      alert('Greska u dodavanju vozaca');
+    }
+  }
+

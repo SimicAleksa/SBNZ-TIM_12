@@ -45,4 +45,31 @@ public class Kazna  {
         this.duzinaZatvorskeKazne = (int)duzinaZatvorskeKazne;
         this.datum = LocalDateTime.now();
     }
+
+    // ovo je konstruktor samo kad se pravi za vozenje bez vozacke
+    public Kazna(String registarskiBrojVozila, String brojVozackeDozvole, double novcanaKazna, double brojKaznenihBodova, double duzinaZatvorskeKazne) {
+        this.registarskiBrojVozila = registarskiBrojVozila;
+        this.brojVozackeDozvole = brojVozackeDozvole;
+        this.novcanaKazna = novcanaKazna;
+        this.brojKaznenihBodova = (int)brojKaznenihBodova;
+        this.duzinaZatvorskeKazne = (int)duzinaZatvorskeKazne;
+        this.datum = LocalDateTime.now();
+    }
+
+    // ovaj konstruktor sluzi samo za testiranje rada fronta
+    public Kazna(String registarskiBrojVozila, String brojVozackeDozvole, double novcanaKazna,
+                 double brojKaznenihBodova, double duzinaZatvorskeKazne, boolean istekla, boolean placena) {
+        this.registarskiBrojVozila = registarskiBrojVozila;
+        this.brojVozackeDozvole = brojVozackeDozvole;
+        this.novcanaKazna = novcanaKazna;
+        this.brojKaznenihBodova = (int)brojKaznenihBodova;
+        this.duzinaZatvorskeKazne = (int)duzinaZatvorskeKazne;
+        this.datum = LocalDateTime.now();
+        this.istekla = istekla;
+        if (placena)
+        {
+            this.vremePlacanja = LocalDateTime.now();
+        }
+    }
+
 }

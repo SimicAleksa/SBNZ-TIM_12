@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
@@ -12,12 +13,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Vozilo {
-    private String id;
+    @Id
+    private String registarskiBrojVozila;
     private String brojVozackeDozvoleVozaca;
     private String boja;
     private String marka;
     private String model;
-    private String registarskiBrojVozila;
 //    private List<Kazna> kazne;
 
 

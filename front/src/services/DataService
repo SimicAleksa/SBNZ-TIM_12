@@ -1,0 +1,33 @@
+
+  export const getPodaciSRadara = async () => {
+    const response = await fetch('http://localhost:8080/getPodaciSRadara', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },   
+    });
+    if (response.ok) {
+      const podaci = await response.json();
+      console.log(podaci);
+      return podaci;
+    } else {
+      alert('Greska u dobavljanju');
+    }
+  }
+
+
+  export const getKazne = async () => {
+    const response = await fetch('http://localhost:8080/getKazne', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },   
+    });
+    if (response.ok) {
+      const kazne = await response.json();
+      console.log(kazne);
+      return kazne;
+    } else {
+      alert('Greska u dobavljanju');
+    }
+  }
