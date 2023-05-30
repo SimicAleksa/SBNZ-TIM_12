@@ -5,13 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 //@AllArgsConstructor
 @NoArgsConstructor
-public class IzvrsiteljskiPostupak {
+public class IzvrsiteljskiPostupak implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String idKazne;
     private String brojVozackeDozvole;
     private double iznos;

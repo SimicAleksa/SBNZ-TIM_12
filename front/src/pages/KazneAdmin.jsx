@@ -200,7 +200,7 @@ import AdminNavbar from '../other/AdminNavbar';
         </div>
         <div className="attribute" class="col-md-4">
         <label>Kazna je placena: </label>
-        {fine.vremePlacanja ? <BsCheckCircle className="icon-positive" /> : <BsXCircle className="icon-negative" />}
+        {fine.vremePlacanja || fine.novcanaKazna == 0 ? <BsCheckCircle className="icon-positive" /> : <BsXCircle className="icon-negative" />}
       </div>
       <div className="attribute" class="col-md-4">
         <label>Kazna je aktivna: </label>

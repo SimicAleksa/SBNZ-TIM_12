@@ -2,6 +2,7 @@ package com.ftn.sbnz.service.controllers;
 
 import com.ftn.sbnz.model.Korisnik;
 import com.ftn.sbnz.model.dtos.AddDriverDTO;
+import com.ftn.sbnz.model.dtos.DriverDTO;
 import com.ftn.sbnz.model.dtos.LoginDTO;
 import com.ftn.sbnz.service.services.KorisnikService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,13 @@ public class KorisnikController {
     public ResponseEntity<String> addDriver(@RequestBody AddDriverDTO dto) {
         this.korisnikService.addDriver(dto);
         return new ResponseEntity<>("OK", HttpStatus.OK);
+
+    }
+
+    @PostMapping(value = "/getUserData", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DriverDTO> getUserData(@RequestBody LoginDTO dto) {
+        DriverDTO retVal = this.korisnikService.getUserData(dto);
+        return new ResponseEntity<>(retVal, HttpStatus.OK);
 
     }
 

@@ -7,11 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Korisnik {
+public class Korisnik implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     protected String id;
     protected String ime;

@@ -74,7 +74,7 @@ end
 
 rule "vjecno oduzimanje vozacke dozvole"
     when
-        $v: Vozac(brojOduzimanjeVozacke==3, $brVoz = brojVozackeDozvole)
+        $v: Vozac(brojOduzimanjeVozacke==3, $brVoz : brojVozackeDozvole)
     then
         modify ($v) { setBrojVozackeDozvole("XXX" + $brVoz) };
         modify ($v) { setVjecnoBlokiran(true) };
@@ -131,7 +131,7 @@ end
 rule "vozac je vozio sa trajno oduzetom vozackom dozvolom"
     when
         $p: PodaciSaRadaraDTO($regBrRadar: registarskiBrojVozila)
-        $v: Vozilo(brojVozackeDozvoleVozaca=="XXX" + $brVoz, registarskiBrojVozila==$regBrRadar)
+        $v: Vozilo($brVoz: brojVozackeDozvoleVozaca, brojVozackeDozvoleVozaca.startsWith("XXX"), registarskiBrojVozila==$regBrRadar)
     then
         insert(new Kazna($regBrRadar, $brVoz, 100000, 14, 15));
 end

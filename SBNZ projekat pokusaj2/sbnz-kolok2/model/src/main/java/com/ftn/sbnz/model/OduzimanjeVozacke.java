@@ -6,15 +6,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OduzimanjeVozacke {
-//    @Id
-//    private String id;
+public class OduzimanjeVozacke implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    private String id;
     private String brojVozackeDozvole;
     private LocalDateTime datum;
     private int brojMeseci;

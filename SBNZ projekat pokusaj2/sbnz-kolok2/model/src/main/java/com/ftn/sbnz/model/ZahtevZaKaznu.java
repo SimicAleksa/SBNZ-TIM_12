@@ -18,7 +18,6 @@ import java.io.Serializable;
 public class ZahtevZaKaznu implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
     @Id
     private String sifraKazne;
     private String registarskiBrojVozila;

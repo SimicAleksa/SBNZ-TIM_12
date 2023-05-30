@@ -1,6 +1,7 @@
 package com.ftn.sbnz.service.services;
 
 import com.ftn.sbnz.model.*;
+import com.ftn.sbnz.service.config.FileKieSessionLoader;
 import com.ftn.sbnz.service.repositories.*;
 import org.apache.commons.io.IOUtils;
 import org.drools.template.ObjectDataCompiler;
@@ -11,12 +12,16 @@ import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
 import org.kie.api.io.ResourceType;
+import org.kie.api.marshalling.Marshaller;
+import org.kie.api.marshalling.MarshallingConfiguration;
 import org.kie.api.runtime.KieSession;
+import org.kie.internal.marshalling.MarshallerFactory;
+import org.kie.internal.runtime.StatefulKnowledgeSession;
 import org.kie.internal.utils.KieHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -122,6 +127,42 @@ public class PravilaService {
         insertObjectsFromDatabase(kSession);
         int n = kSession.fireAllRules();
         System.out.println(n + "je broj odradjenih pravila");
+        saveKieSession(kSession);
         return kSession;
+    }
+
+    private void saveKieSession(KieSession kSession) {
+        String filePath = "C:\\Users\\Nevena\\Desktop\\sbnz final\\SBNZ-TIM_12\\SBNZ projekat pokusaj2\\sbnz-kolok2\\kjar\\src\\main\\resources\\kieSession.bin";
+        File file = new File(filePath);
+        FileKieSessionLoader fksl = new FileKieSessionLoader(file);
+        fksl.save(kSession);
+    }
+
+    public KieSession readKieSession() {
+        String filePath = "C:\\Users\\Nevena\\Desktop\\sbnz final\\SBNZ-TIM_12\\SBNZ projekat pokusaj2\\sbnz-kolok2\\kjar\\src\\main\\resources\\kieSession.bin";
+        File file = new File(filePath);
+
+        FileKieSessionLoader fksl = new FileKieSessionLoader(file);
+        return fksl.load();
+    }
+
+    public void saveObjects(KieSession kieSession) {
+        for (Object o: kieSession.getObjects())
+        {
+            if (o instanceof Korisnik) korisnikRepository.save((Korisnik) o);
+            if (o instanceof IzvrsiteljskiPostupak) izvrsiteljskiPostupakRepository.save((IzvrsiteljskiPostupak) o);
+            if (o instanceof Kazna) kaznaRepository.save((Kazna) o);
+            if (o instanceof OduzimanjeVozacke) oduzimanjeVozackeRepository.save((OduzimanjeVozacke) o);
+            if (o instanceof PodaciSaRadaraDTO) podaciSaRadaraRepository.save((PodaciSaRadaraDTO) o);
+            if (o instanceof Vozilo) voziloRepository.save((Vozilo) o);
+            if (o instanceof ZahtevZaKaznu) zahtevZaKaznuRepository.save((ZahtevZaKaznu) o);
+            System.out.println(o.toString());
+        }
+        System.out.println("zavrseno ispisivanje");
+    }
+
+    public void deleteCreated() {
+        this.podaciSaRadaraRepository.deleteAll();
+        this.kaznaRepository.deleteAll();
     }
 }

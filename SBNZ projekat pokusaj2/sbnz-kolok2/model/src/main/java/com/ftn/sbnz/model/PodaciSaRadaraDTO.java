@@ -3,13 +3,16 @@ package com.ftn.sbnz.model;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PodaciSaRadaraDTO {
+public class PodaciSaRadaraDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     @Id
     private String id;
     private String registarskiBrojVozila;

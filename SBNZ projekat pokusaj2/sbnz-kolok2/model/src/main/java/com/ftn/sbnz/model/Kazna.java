@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Role(Role.Type.EVENT)
-public class Kazna  {
+public class Kazna implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     private String id;

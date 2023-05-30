@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface KorisnikRepository extends MongoRepository<Korisnik, String> {
     Korisnik findByEmailAndSifra(String email, String sifra);
 
+    Korisnik findByEmail(String email);
 }
