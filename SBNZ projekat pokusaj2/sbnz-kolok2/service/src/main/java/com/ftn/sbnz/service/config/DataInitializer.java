@@ -16,6 +16,6 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        System.out.println("Usla u data init");
+
     }
 }

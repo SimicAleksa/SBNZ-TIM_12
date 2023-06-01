@@ -3,6 +3,7 @@ import requests
 import time
 
 url_za_brisanje = 'http://localhost:8080/delete'
+url_za_inicijalizaciju = 'http://localhost:8080/init'
 url = 'http://localhost:8080/radar'
 
 prviPodatak = {
@@ -33,7 +34,8 @@ treciPodatak = {
 }
 
 headers = {'Content-Type': 'application/json'}
-
+response = requests.post(url_za_brisanje, headers=headers)
+time.sleep(1)
 response = requests.post(url_za_brisanje, headers=headers)
 time.sleep(2)
 response = requests.post(url, json=prviPodatak, headers=headers)

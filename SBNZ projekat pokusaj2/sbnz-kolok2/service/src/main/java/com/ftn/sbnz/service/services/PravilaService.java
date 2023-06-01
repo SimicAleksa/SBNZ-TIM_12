@@ -12,11 +12,7 @@ import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
 import org.kie.api.io.ResourceType;
-import org.kie.api.marshalling.Marshaller;
-import org.kie.api.marshalling.MarshallingConfiguration;
 import org.kie.api.runtime.KieSession;
-import org.kie.internal.marshalling.MarshallerFactory;
-import org.kie.internal.runtime.StatefulKnowledgeSession;
 import org.kie.internal.utils.KieHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +39,8 @@ public class PravilaService {
     VoziloRepository voziloRepository;
     @Autowired
     ZahtevZaKaznuRepository zahtevZaKaznuRepository;
+    @Autowired
+    PatrolaRepository patrolaRepository;
 
     private KieSession insertRules() {
         InputStream template12 = PodaciSaRadaraService.class.getResourceAsStream("/rules/ugnjezdeniTemplate.drt");
@@ -118,7 +116,12 @@ public class PravilaService {
         for (OduzimanjeVozacke k: oduzimanjeVozackeRepository.findAll()) kSession.insert(k);
         for (PodaciSaRadaraDTO k: podaciSaRadaraRepository.findAll()) kSession.insert(k);
         for (Vozilo k: voziloRepository.findAll()) kSession.insert(k);
-        for (ZahtevZaKaznu k: zahtevZaKaznuRepository.findAll()) kSession.insert(k);
+        for (ZahtevZaKaznu k: zahtevZaKaznuRepository.findAll())
+        {
+            System.out.println(k.toString());
+        }
+
+        for (Patrola p: patrolaRepository.findAll()) kSession.insert(p);
     }
 
     public KieSession prepareSystem() {
@@ -149,16 +152,42 @@ public class PravilaService {
     public void saveObjects(KieSession kieSession) {
         for (Object o: kieSession.getObjects())
         {
-            if (o instanceof Korisnik) korisnikRepository.save((Korisnik) o);
+            if (o instanceof Korisnik && !nalaziSeUKesuAdmin(o)) korisnikRepository.save((Korisnik) o);
             if (o instanceof IzvrsiteljskiPostupak) izvrsiteljskiPostupakRepository.save((IzvrsiteljskiPostupak) o);
-            if (o instanceof Kazna) kaznaRepository.save((Kazna) o);
+            if (o instanceof Kazna && !nalaziSeUKesu(o)) kaznaRepository.save((Kazna) o);
             if (o instanceof OduzimanjeVozacke) oduzimanjeVozackeRepository.save((OduzimanjeVozacke) o);
             if (o instanceof PodaciSaRadaraDTO) podaciSaRadaraRepository.save((PodaciSaRadaraDTO) o);
             if (o instanceof Vozilo) voziloRepository.save((Vozilo) o);
-            if (o instanceof ZahtevZaKaznu) zahtevZaKaznuRepository.save((ZahtevZaKaznu) o);
+            if (o instanceof ZahtevZaKaznu && !nalaziSeUKesuZahtev(o)) zahtevZaKaznuRepository.save((ZahtevZaKaznu) o);
+            if (o instanceof Patrola) patrolaRepository.save((Patrola) o);
             System.out.println(o.toString());
         }
         System.out.println("zavrseno ispisivanje");
+    }
+
+    private boolean nalaziSeUKesuZahtev(Object o) {
+        ZahtevZaKaznu z = (ZahtevZaKaznu) o;
+        return z.getSifraKazne().equals("1") || z.getSifraKazne().equals("2") || z.getSifraKazne().equals("3");
+    }
+
+    private boolean nalaziSeUKesuAdmin(Object o) {
+        if (o instanceof Admin)
+        {
+            for (Korisnik k: korisnikRepository.findAll() )
+            {
+                System.out.println(k.getEmail() + "je mejl");
+                if (k.getEmail().equals("admin@gmail.com"))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean nalaziSeUKesu(Object o) {
+        Kazna k = (Kazna) o;
+        return k.getId().equals("1") || k.getId().equals("2") || k.getId().equals("3");
     }
 
     public void deleteCreated() {

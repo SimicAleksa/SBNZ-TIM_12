@@ -4,46 +4,6 @@ import com.ftn.sbnz.model.*;
 import java.time.LocalDateTime;
 
 
-rule "zatrazi kreiranje prve kaznu"
-    when
-        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne, tipZahtevaZaKaznu == "NEDODELJEN")
-        Number(intValue==1) from accumulate(
-            $z2: ZahtevZaKaznu(registarskiBrojVozila==$regBr)
-            over window:time(15m), count($z2)
-        )
-    then
-        System.out.println("----------Moram da kreiram novu kaznu po nekom sablonu------------");
-        modify ($z1) { setTipZahtevaZaKaznu("DODELI_KAZNU") };
-end
-
-
-
-rule "preskoci drugu kaznu"
-    when
-        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne, tipZahtevaZaKaznu == "NEDODELJEN")
-        Number(intValue==2) from accumulate(
-            $z2: ZahtevZaKaznu(registarskiBrojVozila==$regBr)
-            over window:time(15m), count($z2)
-        )
-    then
-        System.out.println("----------Ne treba da kreiram novu kaznu------------");
-        modify ($z1) { setTipZahtevaZaKaznu("NE_DODELJUJ_KAZNU") };
-end
-
-
-
-rule "posalji patrolu"
-    when
-        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne, tipZahtevaZaKaznu == "NEDODELJEN")
-        Number(intValue>2) from accumulate(
-            $z2: ZahtevZaKaznu(registarskiBrojVozila==$regBr)
-            over window:time(60m), count($z2)
-        )
-    then
-        System.out.println("----------Moram da posaljem patrolu------------");
-        modify ($z1) { setTipZahtevaZaKaznu("POSALJI_PATROLU") };
-end
-
 
 rule "opasan vozac"
     when
@@ -134,6 +94,66 @@ rule "vozac je vozio sa trajno oduzetom vozackom dozvolom"
         $v: Vozilo($brVoz: brojVozackeDozvoleVozaca, brojVozackeDozvoleVozaca.startsWith("XXX"), registarskiBrojVozila==$regBrRadar)
     then
         insert(new Kazna($regBrRadar, $brVoz, 100000, 14, 15));
+end
+
+
+/*rule "zatrazi kreiranje prve kaznu"
+    when
+        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne, tipZahtevaZaKaznu == "NEDODELJEN")
+        Number(intValue==1) from accumulate(
+            $z2: ZahtevZaKaznu(registarskiBrojVozila==$regBr)
+            over window:time(15m), count($z2)
+        )
+    then
+        System.out.println("----------Moram da kreiram novu kaznu po nekom sablonu------------");
+        modify ($z1) { setTipZahtevaZaKaznu("DODELI_KAZNU") };
+end*/
+
+
+
+rule "preskoci drugu kaznu"
+    when
+        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne, tipZahtevaZaKaznu == "NEDODELJEN")
+        Number(intValue==2) from accumulate(
+            $z2: ZahtevZaKaznu(registarskiBrojVozila==$regBr)
+            over window:time(15m), count($z2)
+        )
+    then
+        System.out.println("----------Ne treba da kreiram novu kaznu------------");
+        modify ($z1) { setTipZahtevaZaKaznu("NE_DODELJUJ_KAZNU") };
+end
+
+
+
+rule "posalji patrolu"
+    when
+        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne, tipZahtevaZaKaznu == "NEDODELJEN")
+        Number(intValue>2) from accumulate(
+            $z2: ZahtevZaKaznu(registarskiBrojVozila==$regBr)
+            over window:time(1h), count($z2)
+        )
+    then
+        System.out.println("----------Moram da posaljem patrolu------------");
+        modify ($z1) { setTipZahtevaZaKaznu("POSALJI_PATROLU") };
+end
+
+
+rule "posalji opis patroli"
+    when
+        $z1: ZahtevZaKaznu($regBr: registarskiBrojVozila, $sifraKaz: sifraKazne, tipZahtevaZaKaznu == "POSALJI_PATROLU")
+        $v: Vozilo(registarskiBrojVozila== $regBr, $boj: boja, $mod: model, $mark: marka, $vozacka: brojVozackeDozvoleVozaca)
+        not (Patrola(registarskiBrojVozila==$regBr))
+    then
+        System.out.println("----------Moram da posaljem opis patroli------------");
+        insert(new Patrola($regBr, $boj, $mark, $mod));
+end
+
+
+rule "brisanje starijih patrola"
+    when
+        $p: Patrola(datum.isBefore(LocalDateTime.now().minusHours(12)))
+    then
+        delete ($p);
 end
 
 
