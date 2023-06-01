@@ -1,5 +1,6 @@
 package com.ftn.sbnz.service.services;
 
+import com.ftn.sbnz.model.Kazna;
 import com.ftn.sbnz.model.PodaciSaRadaraDTO;
 import com.ftn.sbnz.service.repositories.PodaciSaRadaraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,4 +26,6 @@ public class PodaciSaRadaraService {
         }
         return retVal;
     }
+
+
 }

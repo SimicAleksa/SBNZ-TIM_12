@@ -13,15 +13,15 @@ import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.KieSessionConfiguration;
+import org.kie.api.runtime.conf.ClockTypeOption;
 import org.kie.internal.utils.KieHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PravilaService {
@@ -93,7 +93,14 @@ public class PravilaService {
         config.setOption(EventProcessingOption.STREAM);
 
         KieBase kieBase = kieHelper.build(config);
-        KieSession kSession = kieBase.newKieSession();
+
+        ////////////////////////////////// umjesto koda izmedju ide novi kod
+//        KieSession kSession = kieBase.newKieSession();
+        ////////////////////////////////////////////////////////////////////
+        KieSessionConfiguration sessionConfig = KieServices.Factory.get().newKieSessionConfiguration();
+        sessionConfig.setOption( ClockTypeOption.get("pseudo") );
+        KieSession kSession = kieBase.newKieSession( sessionConfig, null );
+
         return kSession;
 
     }
@@ -112,14 +119,14 @@ public class PravilaService {
     public void insertObjectsFromDatabase(KieSession kSession) {
         for (Korisnik k: korisnikRepository.findAll()) kSession.insert(k);
         for (IzvrsiteljskiPostupak i: izvrsiteljskiPostupakRepository.findAll()) kSession.insert(i);
-        for (Kazna k: kaznaRepository.findAll()) kSession.insert(k);
+//        for (Kazna k: kaznaRepository.findAll()) kSession.insert(k);
         for (OduzimanjeVozacke k: oduzimanjeVozackeRepository.findAll()) kSession.insert(k);
-        for (PodaciSaRadaraDTO k: podaciSaRadaraRepository.findAll()) kSession.insert(k);
+//        for (PodaciSaRadaraDTO k: podaciSaRadaraRepository.findAll()) kSession.insert(k);
         for (Vozilo k: voziloRepository.findAll()) kSession.insert(k);
-        for (ZahtevZaKaznu k: zahtevZaKaznuRepository.findAll())
-        {
-            System.out.println(k.toString());
-        }
+//        for (ZahtevZaKaznu k: zahtevZaKaznuRepository.findAll())
+//        {
+//            System.out.println(k.toString());
+//        }
 
         for (Patrola p: patrolaRepository.findAll()) kSession.insert(p);
     }
@@ -127,39 +134,92 @@ public class PravilaService {
     public KieSession prepareSystem() {
         KieSession kSession = insertRules();
         writeAllExistingRules(kSession);
+        prepareDatabase();
         insertObjectsFromDatabase(kSession);
         int n = kSession.fireAllRules();
         System.out.println(n + "je broj odradjenih pravila");
+        // TODO ovdje bih mozda mogla da pogledam da li se sve sacuvalo
         saveKieSession(kSession);
         return kSession;
     }
 
-    private void saveKieSession(KieSession kSession) {
-        String filePath = "C:\\Users\\Nevena\\Desktop\\sbnz final\\SBNZ-TIM_12\\SBNZ projekat pokusaj2\\sbnz-kolok2\\kjar\\src\\main\\resources\\kieSession.bin";
+    private void prepareDatabase() {
+        this.podaciSaRadaraRepository.deleteAll();
+        this.kaznaRepository.deleteAll();
+        this.zahtevZaKaznuRepository.deleteAll();
+        this.voziloRepository.deleteAll();
+        this.voziloRepository.save(new Vozilo("065-AV-243", "brojvozacke123", "siva", "audi", "a2"));
+        this.korisnikRepository.deleteAll();
+        this.korisnikRepository.save(new Vozac("brojvozacke123", "Marko", "Markovic", "marko@gmail.com", "m", 2, 5000));
+        this.korisnikRepository.save(new Vozac("drugibroj123", "Pera", "Peric", "pera@gmail.com", "p", 2, 10000));
+        //this.korisnikRepository.save(new Vozac("brojvozacke123", "Marko", "Markovic", "marko@gmail.com", "m", 0));
+        this.korisnikRepository.save(new Admin("Admin", "Admin", "admin@gmail.com", "a"));
+        this.oduzimanjeVozackeRepository.deleteAll();
+        this.izvrsiteljskiPostupakRepository.deleteAll();
+        this.patrolaRepository.deleteAll();
+        
+
+    }
+
+    public void saveKieSession(KieSession kSession) {
+        String filePath = "C:\\Users\\Nevena\\Desktop\\kopija\\SBNZ-TIM_12-feature_front\\SBNZ projekat pokusaj2\\sbnz-kolok2\\kjar\\src\\main\\resources\\kieSession.bin";
         File file = new File(filePath);
         FileKieSessionLoader fksl = new FileKieSessionLoader(file);
         fksl.save(kSession);
     }
 
     public KieSession readKieSession() {
-        String filePath = "C:\\Users\\Nevena\\Desktop\\sbnz final\\SBNZ-TIM_12\\SBNZ projekat pokusaj2\\sbnz-kolok2\\kjar\\src\\main\\resources\\kieSession.bin";
+        String filePath = "C:\\Users\\Nevena\\Desktop\\kopija\\SBNZ-TIM_12-feature_front\\SBNZ projekat pokusaj2\\sbnz-kolok2\\kjar\\src\\main\\resources\\kieSession.bin";
         File file = new File(filePath);
 
         FileKieSessionLoader fksl = new FileKieSessionLoader(file);
         return fksl.load();
     }
 
-    public void saveObjects(KieSession kieSession) {
+    public void saveObjectsInRepos(KieSession kieSession) {
+        // mozda bi prije ovoga trebalo da obrisem sve podatke u bazi
         for (Object o: kieSession.getObjects())
         {
-            if (o instanceof Korisnik && !nalaziSeUKesuAdmin(o)) korisnikRepository.save((Korisnik) o);
-            if (o instanceof IzvrsiteljskiPostupak) izvrsiteljskiPostupakRepository.save((IzvrsiteljskiPostupak) o);
-            if (o instanceof Kazna && !nalaziSeUKesu(o)) kaznaRepository.save((Kazna) o);
-            if (o instanceof OduzimanjeVozacke) oduzimanjeVozackeRepository.save((OduzimanjeVozacke) o);
-            if (o instanceof PodaciSaRadaraDTO) podaciSaRadaraRepository.save((PodaciSaRadaraDTO) o);
-            if (o instanceof Vozilo) voziloRepository.save((Vozilo) o);
-            if (o instanceof ZahtevZaKaznu && !nalaziSeUKesuZahtev(o)) zahtevZaKaznuRepository.save((ZahtevZaKaznu) o);
-            if (o instanceof Patrola) patrolaRepository.save((Patrola) o);
+            if (o instanceof Korisnik)
+            {
+//                korisnikRepository.deleteAll();
+                korisnikRepository.save((Korisnik) o);
+            }
+            if (o instanceof IzvrsiteljskiPostupak)
+            {
+//                izvrsiteljskiPostupakRepository.deleteAll();
+                izvrsiteljskiPostupakRepository.save((IzvrsiteljskiPostupak) o);
+            }
+            if (o instanceof Kazna)
+            {
+//                kaznaRepository.deleteAll();
+                kaznaRepository.save((Kazna) o);
+            }
+            if (o instanceof OduzimanjeVozacke)
+            {
+//                oduzimanjeVozackeRepository.deleteAll();
+                oduzimanjeVozackeRepository.save((OduzimanjeVozacke) o);
+            }
+            if (o instanceof PodaciSaRadaraDTO)
+            {
+//                podaciSaRadaraRepository.deleteAll();
+                podaciSaRadaraRepository.save((PodaciSaRadaraDTO) o);
+            }
+            if (o instanceof Vozilo)
+            {
+//                voziloRepository.deleteAll();
+                voziloRepository.save((Vozilo) o);
+            }
+            if (o instanceof ZahtevZaKaznu/* && !nalaziSeUKesuZahtev(o)*/)
+            {
+//                zahtevZaKaznuRepository.deleteAll();
+                zahtevZaKaznuRepository.save((ZahtevZaKaznu) o);
+            }
+            if (o instanceof Patrola)
+            {
+//                patrolaRepository.deleteAll();
+                patrolaRepository.save((Patrola) o);
+            }
             System.out.println(o.toString());
         }
         System.out.println("zavrseno ispisivanje");
@@ -191,7 +251,77 @@ public class PravilaService {
     }
 
     public void deleteCreated() {
-        this.podaciSaRadaraRepository.deleteAll();
-        this.kaznaRepository.deleteAll();
+
     }
+
+    public void vratiVrijemeObjektimaUBazi() {
+        // kazna, oduzimanjeVozacke, patrola, podaciSaRadara, zahtjevZaKaznu
+        for(Kazna k : kaznaRepository.findAll())
+        {
+            k.setDatum(k.getDatum().minusMonths(7));
+            kaznaRepository.save(k);
+        }
+        for (OduzimanjeVozacke o: oduzimanjeVozackeRepository.findAll())
+        {
+            o.setDatum(o.getDatum().minusMonths(7));
+            oduzimanjeVozackeRepository.save(o);
+        }
+        for (Patrola p: patrolaRepository.findAll())
+        {
+            p.setDatum(p.getDatum().minusMonths(7));
+            patrolaRepository.save(p);
+        }
+        for (PodaciSaRadaraDTO p: podaciSaRadaraRepository.findAll())
+        {
+            p.setDatum(p.getDatum().minusMonths(7));
+            podaciSaRadaraRepository.save(p);
+        }
+        for (ZahtevZaKaznu z: zahtevZaKaznuRepository.findAll())
+        {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(z.getDatum());
+            calendar.add(Calendar.MONTH, -7);
+            Date sevenMonthsBack = calendar.getTime();
+            z.setDatum(sevenMonthsBack);
+        }
+
+    }
+
+    public KieSession vratiVrijemeObjektimaUSesiji(KieSession kieSession) {
+        for (Object o: kieSession.getObjects())
+        {
+            if (o instanceof Kazna)
+            {
+                Kazna k = (Kazna) o;
+                k.setDatum(k.getDatum().minusMonths(7));
+                System.out.println("Vrijeme kazne u sesiji je " + k.getDatum());
+            }
+            if (o instanceof OduzimanjeVozacke)
+            {
+                OduzimanjeVozacke od = (OduzimanjeVozacke) o;
+                od.setDatum(od.getDatum().minusMonths(7));
+            }
+            if (o instanceof Patrola)
+            {
+                Patrola p = (Patrola) o;
+                p.setDatum(p.getDatum().minusMonths(7));
+            }
+            if (o instanceof PodaciSaRadaraDTO)
+            {
+                PodaciSaRadaraDTO p = (PodaciSaRadaraDTO) o;
+                p.setDatum(p.getDatum().minusMonths(7));
+            }
+            if (o instanceof ZahtevZaKaznu)
+            {
+                ZahtevZaKaznu z = (ZahtevZaKaznu) o;
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(z.getDatum());
+                calendar.add(Calendar.MONTH, -7);
+                Date sevenMonthsBack = calendar.getTime();
+                z.setDatum(sevenMonthsBack);
+            }
+        }
+        return kieSession;
+    }
+
 }

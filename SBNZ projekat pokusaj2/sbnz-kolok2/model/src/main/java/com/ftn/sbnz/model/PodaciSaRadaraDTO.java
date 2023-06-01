@@ -24,12 +24,7 @@ public class PodaciSaRadaraDTO implements Serializable {
     private double ogranicenje; // ovo je inicijalno setovano na 0 dok se ne sracuna u template-u
 
     private boolean izracunataBrzina;
-
-
-//    public PodaciSaRadaraDTO() {
-//        this.ogranicenje = 0;
-//    }
-
+    private LocalDateTime datum;
 
     public PodaciSaRadaraDTO(String id, String registarskiBrojVozila, String nazivLokacije, double zabelezenaBrzina,
                              String vremenskoStanje, String tipLokacije) {
@@ -41,55 +36,20 @@ public class PodaciSaRadaraDTO implements Serializable {
         this.vremenskoStanje = vremenskoStanje;
         this.ogranicenje = 0;
         this.izracunataBrzina = false;
+        this.datum = LocalDateTime.now();
+    }
+    public PodaciSaRadaraDTO (PodaciSaRadaraDTO dto)
+    {
+        this.id = dto.getId();
+        this.registarskiBrojVozila = dto.getRegistarskiBrojVozila();
+        this.nazivLokacije = dto.getNazivLokacije();
+        this.tipLokacije = dto.getTipLokacije();
+        this.zabelezenaBrzina = dto.getZabelezenaBrzina();
+        this.vremenskoStanje = dto.getVremenskoStanje();
+        this.ogranicenje = 0;
+        this.izracunataBrzina = false;
+        this.datum = LocalDateTime.now();
+
     }
 
-//    public String getRegistarskiBrojVozila() {
-//        return registarskiBrojVozila;
-//    }
-//
-//    public void setRegistarskiBrojVozila(String registarskiBrojVozila) {
-//        this.registarskiBrojVozila = registarskiBrojVozila;
-//    }
-//
-//    public String getNazivLokacije() {
-//        return nazivLokacije;
-//    }
-//
-//    public void setNazivLokacije(String nazivLokacije) {
-//        this.nazivLokacije = nazivLokacije;
-//    }
-//
-//    public double getZabelezenaBrzina() {
-//        return zabelezenaBrzina;
-//    }
-//
-//    public void setZabelezenaBrzina(double zabelezenaBrzina) {
-//        this.zabelezenaBrzina = zabelezenaBrzina;
-//    }
-//
-//    public String getVremenskoStanje() {
-//        return vremenskoStanje;
-//    }
-//
-//    public void setVremenskoStanje(String vremenskoStanje) {
-//        this.vremenskoStanje = vremenskoStanje;
-//    }
-//
-//    public String getTipLokacije() {
-//        return tipLokacije;
-//    }
-//
-//    public void setTipLokacije(String tipLokacije) {
-//        this.tipLokacije = tipLokacije;
-//    }
-//
-//    public double getOgranicenje() {
-//        return ogranicenje;
-//    }
-//
-//    public void setOgranicenje(double ogranicenje) {
-//        this.ogranicenje = ogranicenje;
-//    }
-//
-//
 }

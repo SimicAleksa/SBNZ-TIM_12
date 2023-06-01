@@ -1,4 +1,5 @@
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const login = async (username, password, navigate) => {
     const response = await fetch('http://localhost:8080/login', {
@@ -18,10 +19,9 @@ export const login = async (username, password, navigate) => {
         navigate('/register');
       } else if (korisnik.uloga === 'VOZAC') {
         navigate('/vozacevProfil'); 
-        localStorage.setItem("email",username);
+        localStorage.setItem("email", username);
       }
     } else {
-      // TODO ovdje uraditi nesto ako nije dobro
       toast.error("Nevalidni kredencijali");
     }
   }
@@ -38,7 +38,8 @@ export const login = async (username, password, navigate) => {
     });
 
     if (response.ok) {
-      alert("Uspjesno dodat vozac")
+      toast.success("Vozac uspjesno dodat");
+
     } else {
       alert('Greska u dodavanju vozaca');
     }

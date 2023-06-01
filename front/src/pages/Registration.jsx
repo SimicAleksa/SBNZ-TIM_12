@@ -7,6 +7,7 @@ import { addDriver } from '../services/UserService';
 
 
 
+
 const Registration = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -81,6 +82,8 @@ const Registration = () => {
       setFirstName('');
       setLastName('');
       setLicenseNumber('');
+      setEmail('');
+      setPassword("");
       setCars([]);
     };
 
@@ -89,10 +92,11 @@ const Registration = () => {
         <div style={{position: 'fixed', width: '100%', top: '0px'}}>
         <AdminNavbar/>
         </div>
-        <div className="registration-page">
-          <div className="card">
+        <div className="registration-page"> 
+          <div className="card"  style={{marginTop: '80px'}}>
             <h1 className="card-title">Dodavanje vozaca</h1>
             <form onSubmit={handleSubmit}>
+            <ToastContainer />
             <div className='row'>
               <div className="form-group col-md-6">
                 <label htmlFor="firstName">Ime</label>

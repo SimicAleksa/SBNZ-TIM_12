@@ -14,8 +14,8 @@ import static java.lang.Math.min;
 
 
 
-template "Odredi_kaznu_sa_fiksnim_iznosom"
-    rule "Vrsta_fiksne_kazne_@{row.rowNumber}"
+template "Odredi_kaznu_sa_fiksnim_iznosom_prva_kazna"
+    rule "Vrsta_fiksne_kazne_prva_kazna_@{row.rowNumber}"
         when
             $z1: ZahtevZaKaznu(prekoracenje >= @{donjaGranicaPrekoracenja}, prekoracenje <= @{gornjaGranicaPrekoracenja}, 
             tipLokacije=="@{vrstaLokacije}", tipZahtevaZaKaznu=="DODELI_KAZNU", $id: sifraKazne, $reg: registarskiBrojVozila, 
@@ -29,8 +29,8 @@ template "Odredi_kaznu_sa_fiksnim_iznosom"
 end template
 
 
-template "Odredi_kaznu_sa_varijabilnim_iznosom"
-    rule "Vrsta_varijabilne_kazne_@{row.rowNumber}"
+template "Odredi_kaznu_sa_varijabilnim_iznosom_prva_kazna"
+    rule "Vrsta_varijabilne_kazne_prva_kazna_@{row.rowNumber}"
         when
             $z1: ZahtevZaKaznu(prekoracenje >= @{donjaGranicaPrekoracenja}, prekoracenje <= @{gornjaGranicaPrekoracenja}, 
             tipLokacije=="@{vrstaLokacije}", tipZahtevaZaKaznu=="DODELI_KAZNU", $id: sifraKazne, $reg: registarskiBrojVozila, 
@@ -44,7 +44,44 @@ template "Odredi_kaznu_sa_varijabilnim_iznosom"
             $v: Vozilo($brVozacke: brojVozackeDozvoleVozaca)
         then
             System.out.println("usla sam u pravljenje kazne sa varijabilnim iznosom i total je iznosio " + $total);
-            double visinaKazne = min($total.doubleValue(), @{gornjaGranicaNovcaneKazne});
+            double visinaKazne = min($total.doubleValue() + @{donjaGranicaNovcaneKazne}, @{gornjaGranicaNovcaneKazne});
+            insert(new Kazna($id, $reg, $brVozacke, visinaKazne, @{brojKaznenihPoena}, @{duzinaZatvorskeKazne}));
+    end
+end template
+
+
+
+template "Odredi_kaznu_sa_fiksnim_iznosom_treca_kazna"
+    rule "Vrsta_fiksne_kazne_treca_kazna_@{row.rowNumber}"
+        when
+            $z1: ZahtevZaKaznu(prekoracenje >= @{donjaGranicaPrekoracenja}, prekoracenje <= @{gornjaGranicaPrekoracenja}, 
+            tipLokacije=="@{vrstaLokacije}", tipZahtevaZaKaznu=="POSALJI_PATROLU", $id: sifraKazne, $reg: registarskiBrojVozila, 
+            @{donjaGranicaNovcaneKazne}==@{gornjaGranicaNovcaneKazne})  
+            not Kazna(id==$id)
+            $v: Vozilo($brVozacke: brojVozackeDozvoleVozaca)
+        then
+            System.out.println("usla sam u pravljenje kazne sa fiksnim iznosom");
+            insert(new Kazna($id, $reg, $brVozacke, @{donjaGranicaNovcaneKazne}, @{brojKaznenihPoena}, @{duzinaZatvorskeKazne}));
+    end
+end template
+
+
+template "Odredi_kaznu_sa_varijabilnim_iznosom_treca_kazna"
+    rule "Vrsta_varijabilne_kazne__treca_kazna_@{row.rowNumber}"
+        when
+            $z1: ZahtevZaKaznu(prekoracenje >= @{donjaGranicaPrekoracenja}, prekoracenje <= @{gornjaGranicaPrekoracenja}, 
+            tipLokacije=="@{vrstaLokacije}", tipZahtevaZaKaznu=="POSALJI_PATROLU", $id: sifraKazne, $reg: registarskiBrojVozila, 
+            @{donjaGranicaNovcaneKazne}!=@{gornjaGranicaNovcaneKazne}) 
+            
+            $total: Number() from accumulate(
+            $k: Kazna(registarskiBrojVozila == $reg, $iznos: novcanaKazna)
+            over window:time(525600m), sum($iznos)
+            )    
+            not Kazna(id==$id)
+            $v: Vozilo($brVozacke: brojVozackeDozvoleVozaca)
+        then
+            System.out.println("usla sam u pravljenje kazne sa varijabilnim iznosom i total je iznosio " + $total);
+            double visinaKazne = min($total.doubleValue() + @{donjaGranicaNovcaneKazne}, @{gornjaGranicaNovcaneKazne});
             insert(new Kazna($id, $reg, $brVozacke, visinaKazne, @{brojKaznenihPoena}, @{duzinaZatvorskeKazne}));
     end
 end template
