@@ -27,7 +27,7 @@ template "Smanji_gornju_granicu_zbog_vremena"
         when
             $r: PodaciSaRadaraDTO(vremenskoStanje == "@{vrstaVremena}", ogranicenje!=0, izracunataBrzina==false, $prvobitnoOgranicenje:ogranicenje )
         then
-            System.out.println("usla sam i u drugo pravilo");
+            System.out.println("usao sam i u drugo pravilo");
             modify ($r) { setOgranicenje($prvobitnoOgranicenje * (1 - @{procenatUmanjenjaBrzine} / 100)) };
             modify ($r) { setIzracunataBrzina(true) }; 
     end

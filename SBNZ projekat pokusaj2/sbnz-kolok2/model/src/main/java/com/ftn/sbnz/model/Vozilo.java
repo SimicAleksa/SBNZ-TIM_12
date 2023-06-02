@@ -21,7 +21,6 @@ public class Vozilo implements Serializable {
     private String boja;
     private String marka;
     private String model;
-//    private List<Kazna> kazne;
 
 
 }

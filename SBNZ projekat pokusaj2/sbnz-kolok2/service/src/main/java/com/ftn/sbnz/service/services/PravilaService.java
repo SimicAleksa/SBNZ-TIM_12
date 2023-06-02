@@ -180,47 +180,38 @@ public class PravilaService {
     }
 
     public void saveObjectsInRepos(KieSession kieSession) {
-        // mozda bi prije ovoga trebalo da obrisem sve podatke u bazi
         for (Object o: kieSession.getObjects())
         {
             if (o instanceof Korisnik)
             {
-//                korisnikRepository.deleteAll();
                 korisnikRepository.save((Korisnik) o);
             }
             if (o instanceof IzvrsiteljskiPostupak)
             {
-//                izvrsiteljskiPostupakRepository.deleteAll();
                 izvrsiteljskiPostupakRepository.save((IzvrsiteljskiPostupak) o);
             }
             if (o instanceof Kazna)
             {
-//                kaznaRepository.deleteAll();
                 kaznaRepository.save((Kazna) o);
             }
             if (o instanceof OduzimanjeVozacke)
             {
-//                oduzimanjeVozackeRepository.deleteAll();
                 oduzimanjeVozackeRepository.save((OduzimanjeVozacke) o);
             }
             if (o instanceof PodaciSaRadaraDTO)
             {
-//                podaciSaRadaraRepository.deleteAll();
                 podaciSaRadaraRepository.save((PodaciSaRadaraDTO) o);
             }
             if (o instanceof Vozilo)
             {
-//                voziloRepository.deleteAll();
                 voziloRepository.save((Vozilo) o);
             }
-            if (o instanceof ZahtevZaKaznu/* && !nalaziSeUKesuZahtev(o)*/)
+            if (o instanceof ZahtevZaKaznu)
             {
-//                zahtevZaKaznuRepository.deleteAll();
                 zahtevZaKaznuRepository.save((ZahtevZaKaznu) o);
             }
             if (o instanceof Patrola)
             {
-//                patrolaRepository.deleteAll();
                 patrolaRepository.save((Patrola) o);
             }
             System.out.println(o.toString());

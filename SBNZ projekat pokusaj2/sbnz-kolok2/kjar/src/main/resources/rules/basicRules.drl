@@ -14,7 +14,7 @@ rule "opasan vozac"
             sum($brKaznenihBodova))
         eval($total.intValue() >= 14 && $total.intValue() <= 17)
     then
-        System.out.println("-----------Usla sam u privremeno oduzimanje vozacke-----------");
+        System.out.println("-----------Usao sam u privremeno oduzimanje vozacke-----------");
         insert(new OduzimanjeVozacke($brojVozackeDozvole, 12));
 end
 
@@ -28,7 +28,7 @@ rule "trajno oduzimanje vozacke"
             sum($brKaznenihBodova))
             eval($total.intValue() >= 18 - 3 * $brOduzimanja)
     then
-        System.out.println("-----------Usla sam u trajno oduzimanje-----------");
+        System.out.println("-----------Usao sam u trajno oduzimanje-----------");
         modify ($v) { setBrojVozackeDozvole("") };
         modify ($v) { povecajBrojOduzimanjaVozacke() };   
 end
@@ -38,7 +38,7 @@ rule "vjecno oduzimanje vozacke dozvole"
     when
         $v: Vozac(brojOduzimanjeVozacke==3, $brVoz : brojVozackeDozvole, vjecnoBlokiran==false)
     then
-        System.out.println("----------Usla sam u vjecno oduzimanje vozacke------------");
+        System.out.println("----------Usao sam u vjecno oduzimanje vozacke------------");
         modify ($v) { setBrojVozackeDozvole("XXX" + $brVoz) };
         modify ($v) { setVjecnoBlokiran(true) };
 end
@@ -48,7 +48,7 @@ rule "brisanje kaznenih bodova nakon 2 godine"
     when
         $k: Kazna(datum.isBefore(LocalDateTime.now().minusYears(2)))
     then
-        System.out.println("----------Usla sam u brisanje kaznenih bodova------------");
+        System.out.println("----------Usao sam u brisanje kaznenih bodova------------");
         modify ($k) { setIstekla(true) };
 end
 
@@ -64,7 +64,6 @@ rule "vozac nije platio kaznu i ne moze da se pretvori u kaznu zatvora"
         not IzvrsiteljskiPostupak(idKazne==$id);
     then
         System.out.println("----------Nasla sam vozaca koji nije platio kaznu, i ne moze u zatvor------------");
-        System.out.println(LocalDateTime.now());
         insert(new IzvrsiteljskiPostupak($id, $brVoz, $iznos));
         modify ($k) { setIstekla(true) };
 end
@@ -117,7 +116,7 @@ rule "zatrazi kreiranje prve kaznu"
             over window:time(15m), count($z2)
         )
     then
-        System.out.println("----------Usla sam u dodjelu prve kazne------------");
+        System.out.println("----------Usao sam u dodjelu prve kazne------------");
         modify ($z1) { setTipZahtevaZaKaznu("DODELI_KAZNU") };
 end
 
@@ -131,7 +130,7 @@ rule "preskoci drugu kaznu"
             over window:time(15m), count($z2)
         )
     then
-        System.out.println("----------Usla sam u preskakanje druge kazne------------");
+        System.out.println("----------Usao sam u preskakanje druge kazne------------");
         modify ($z1) { setTipZahtevaZaKaznu("NE_DODELJUJ_KAZNU") };
 end
 
@@ -145,7 +144,7 @@ rule "posalji patrolu"
             over window:time(1h), count($z2)
         )
     then
-        System.out.println("----------Usla sam u slanje patrole------------");
+        System.out.println("----------Usao sam u slanje patrole------------");
         modify ($z1) { setTipZahtevaZaKaznu("POSALJI_PATROLU") };
 end
 
@@ -156,7 +155,7 @@ rule "posalji opis patroli"
         $v: Vozilo(registarskiBrojVozila== $regBr, $boj: boja, $mod: model, $mark: marka, $vozacka: brojVozackeDozvoleVozaca)
         not (Patrola(registarskiBrojVozila==$regBr))
     then
-        System.out.println("---------Usla sam u slanje opisa patroli------------");
+        System.out.println("---------Usao sam u slanje opisa patroli------------");
         insert(new Patrola($regBr, $boj, $mark, $mod));
 end
 
@@ -165,7 +164,7 @@ rule "brisanje starijih patrola"
     when
         $p: Patrola(datum.isBefore(LocalDateTime.now().minusHours(6)))
     then
-        System.out.println("----------Usla sam u brisnaje starih patrola------------");
+        System.out.println("----------Usao sam u brisnaje starih patrola------------");
         delete ($p);
 end
 

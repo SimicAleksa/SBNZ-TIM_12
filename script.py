@@ -34,7 +34,7 @@ treciPodatak = {
     'tipLokacije': 'naseljeno mesto',
 }
 
-###############################
+############################### drugi vozac
 
 cetvrtiPodatak = {
     'id': "20",
@@ -97,6 +97,8 @@ response = requests.post(url, json=drugiPodatak, headers=headers)
 time.sleep(2) 
 response = requests.post(url, json=treciPodatak, headers=headers)
 time.sleep(2)
+
+# ubrzavanje vremena
 response = requests.post(url_za_ubrzavanjeVremena, headers=headers)
 time.sleep(2)
 response = requests.post(url_za_ubrzavanjeVremena, headers=headers)
