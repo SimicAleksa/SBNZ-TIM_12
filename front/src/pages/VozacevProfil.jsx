@@ -72,16 +72,20 @@ const UserFinesPage = () => {
       });
       if (response.ok) {
         const podaci = await response.json();
-        console.log(podaci);
-        if (podaci==="OK")
+        console.log(podaci.id);
+        if (podaci.id==="OK")
         {
-          alert("Uspjesno placeno")
           toast.success("Kazna je uspjesno placena");
+          var millisecondsToWait = 5600;
+          setTimeout(function() {
+            window.location.reload(false);
+          }, millisecondsToWait);
+
+
         }
         else
         {
           toast.error("Nemate dovoljno novca na racunu");
-          alert("nema para");
         }
         return podaci;
       } else {
@@ -95,6 +99,7 @@ const UserFinesPage = () => {
       <div>
         <div style={{position: 'fixed', width: '100%', top: '0px'}}>
       <DriverNavbar/>
+      <ToastContainer />
       </div>
       <div id="backgroundDiv-vozac">
         <div style={{ width: '65%', margin: '0 auto', marginTop: '60px'}} id='outerDiv' class='shadow'>

@@ -30,10 +30,10 @@ public class PodaciSaRadaraController {
         pravilaService.prepareSystem();
     }
 
-    /*@PostMapping(value = "/delete")
+    @PostMapping(value = "/delete")
     public void delete() {
         this.pravilaService.deleteCreated();
-    }*/
+    }
 
     @PostMapping(value = "/radar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void getDataFromRadar(@RequestBody PodaciSaRadaraDTO dto) {

@@ -53,6 +53,8 @@ public class PravilaService {
         parametri1.add(new ParametriZaNaseljeIVreme("nenaseljeno mesto", 70.00, "aleksic", 0));
         parametri1.add(new ParametriZaNaseljeIVreme("sad", 0.00, "kisa", 20));
         parametri1.add(new ParametriZaNaseljeIVreme("dsa", 0.00, "sneg", 30));
+        parametri1.add(new ParametriZaNaseljeIVreme("dsa", 0.00, "regularno", 0));
+
 
         List<ParametriZaKaznu> parametri2 = new ArrayList<>();
         parametri2.add(new ParametriZaKaznu("naseljeno mesto", Double.valueOf(1), Double.valueOf(10.0), Double.valueOf(3000.00), Double.valueOf(3000.00), 0, 0));
@@ -149,9 +151,10 @@ public class PravilaService {
         this.zahtevZaKaznuRepository.deleteAll();
         this.voziloRepository.deleteAll();
         this.voziloRepository.save(new Vozilo("065-AV-243", "brojvozacke123", "siva", "audi", "a2"));
+        this.voziloRepository.save(new Vozilo("123-NS-456", "drugibroj123", "bela", "toyota", "aygo"));
         this.korisnikRepository.deleteAll();
         this.korisnikRepository.save(new Vozac("brojvozacke123", "Marko", "Markovic", "marko@gmail.com", "m", 2, 5000));
-        this.korisnikRepository.save(new Vozac("drugibroj123", "Pera", "Peric", "pera@gmail.com", "p", 2, 10000));
+        this.korisnikRepository.save(new Vozac("drugibroj123", "Pera", "Peric", "pera@gmail.com", "p", 0, 40000));
         //this.korisnikRepository.save(new Vozac("brojvozacke123", "Marko", "Markovic", "marko@gmail.com", "m", 0));
         this.korisnikRepository.save(new Admin("Admin", "Admin", "admin@gmail.com", "a"));
         this.oduzimanjeVozackeRepository.deleteAll();
@@ -251,6 +254,10 @@ public class PravilaService {
     }
 
     public void deleteCreated() {
+        this.kaznaRepository.deleteAll();
+        this.izvrsiteljskiPostupakRepository.deleteAll();
+        this.zahtevZaKaznuRepository.deleteAll();
+        this.podaciSaRadaraRepository.deleteAll();
 
     }
 

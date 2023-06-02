@@ -10,7 +10,7 @@ const DriverNavbar = () => {
             <Link className="navbar-brand" to="/">My App</Link>
             <ul className="navbar-nav d-flex flex-row">
               <li className="nav-item">
-                <Link className="nav-link" to="/register">Moje kazne</Link>
+                <Link className="nav-link" to="/vozacevProfil">Moje kazne</Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/">Odjavi se</Link>
